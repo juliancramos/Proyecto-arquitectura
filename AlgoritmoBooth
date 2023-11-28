@@ -1,0 +1,117 @@
+EVAL_Q: MOV DPTR,CTE
+            Q
+            MOV ACC,[DPTR]
+            LSB ACC
+            MOV A,ACC
+EVAL_Q1: MOV DPTR,CTE
+            Q1
+            MOV ACC,[DPTR]
+            LSB ACC
+XOR: XOR ACC,A
+      			JZ START_LOOP
+      			MOV DPTR,CTE
+      			Q1
+      			MOV ACC,[DPTR]
+            LSB ACC
+            JZ RESTA
+            JMP SUMA
+SUMA:  MOV DPTR,CTE
+            M
+            MOV ACC,[DPTR]
+            MOV A,ACC 
+            MOV DPTR,CTE
+            AUX
+            MOV ACC,[DPTR]
+            ADD ACC,A
+            MOV [DPTR],ACC
+            JMP START_LOOP
+RESTA: MOV DPTR,CTE
+            M
+            MOV ACC,[DPTR]
+			      NEG ACC
+            MOV A,ACC
+            MOV DPTR,CTE
+            AUX
+            MOV ACC,[DPTR]
+            ADD ACC,A
+            MOV [DPTR],ACC
+			      JMP START_LOOP       	      	
+SHIFT_Q1:  MOV DPTR,CTE
+			     Q1
+  				 MOV ACC,CTE
+           0x00
+			     MOV [DPTR],ACC
+			     JMP FIRST_Q    		 
+SHIFT_Q: MOV DPTR,CTE
+			      Q
+  				  MOV ACC,[DPTR]
+  				  SRL ACC
+			      MOV [DPTR],ACC
+  				  JMP FIRST_A		  
+SHIFT_A: MOV DPTR,CTE
+    				AUX
+    				MOV ACC,[DPTR]
+    				SRL ACC
+      			MOV [DPTR],ACC
+      			JMP CHECK
+START_LOOP: MOV DPTR,CTE
+            Q
+            MOV ACC,[DPTR]
+            LSB ACC
+      		  JZ SHIFT_Q1     
+ELSESHIFTQ1: MOV DPTR,CTE
+            Q1
+			      MOV ACC,CTE
+            0x01
+            MOV [DPTR],ACC
+FIRST_Q: MOV DPTR,CTE
+            AUX
+            MOV ACC,[DPTR]
+            LSB ACC
+      		JZ SHIFT_Q
+ELSESHIFTQ: MOV DPTR,CTE
+      			Q
+				    MOV ACC,[DPTR]
+      			SRL ACC
+      			MOV A,ACC
+      			MOV ACC,CTE
+      			0x80
+      			OR ACC,A
+      			MOV [DPTR],ACC			
+FIRST_A:	MOV ACC,CTE
+    			0x80
+    			MOV A,ACC
+    			MOV DPTR,CTE
+    			AUX
+				  MOV ACC,[DPTR]
+    			AND ACC,A
+    			JZ SHIFT_A
+SECOND_A: MOV DPTR,CTE
+    			AUX
+				  MOV ACC,[DPTR]
+    			SRL ACC
+    			MOV A,ACC
+    			MOV ACC,CTE
+    			0x80
+    			OR ACC,A
+    			MOV [DPTR],ACC
+CHECK: MOV DPTR,CTE
+				COUNT
+				MOV ACC,[DPTR]
+				DEC ACC
+				MOV [DPTR],ACC
+				JZ FINALIZAR
+				JMP EVAL_Q      
+FINALIZAR: MOV DPTR,CTE
+				  AUX
+				  MOV ACC,[DPTR]
+				  MOV A,ACC
+				  MOV DPTR,CTE
+				  Q
+				  MOV ACC,[DPTR]
+				  HALT
+AUX:	0x00
+M:	0x03
+Q:		0x02
+Q1:	0x00
+COUNT:	0x08
